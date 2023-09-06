@@ -1,0 +1,15 @@
+//STOCK
+o>Input Stock
+Link: id-7.hostddns.us:2461/stk/savestock
+Method: POST
+Controller:
+nama_barang := c.FormValue("nama_barang")
+harga_barang := c.FormValue("harga_barang")
+jenis_barang := c.FormValue("jenis_barang")
+id_ukuran := c.FormValue("id_ukuran") -> contoh: |1||2||3||4||5||6|
+jumlah_stock := c.FormValue("jumlah_stock") -> contoh: |20||20||20||20||20||20|
+
+o>Read Stock
+Link: id-7.hostddns.us:2461/stk/showstock
+Method: GET
+Controller:

@@ -8,6 +8,7 @@ type ShowAllProduct struct {
 	Ukuran       []Ukuran `json:"ukuran"`
 }
 type Ukuran struct {
+	Id_ukuran     int    `json:"id_ukuran"`
 	UkuranProduct string `json:"ukuran_product"`
 	Stock         int    `json:"stock"`
 }

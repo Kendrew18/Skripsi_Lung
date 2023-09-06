@@ -2,7 +2,11 @@ package routes
 
 import (
 	"kendrew/controller"
+	order "kendrew/controller/Order"
+	pelanggan "kendrew/controller/Pelanggan"
+	retur "kendrew/controller/Retur"
 	salesman "kendrew/controller/Salesman"
+	stock "kendrew/controller/Stock"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -15,11 +19,39 @@ func Init() *echo.Echo {
 	e.Use(middleware.CORSWithConfig(middleware.DefaultCORSConfig))
 
 	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Project-NDL")
+		return c.String(http.StatusOK, "Skripsi-LUNG")
 	})
-	//for get data
+	sales := e.Group("/sales")
+	stk := e.Group("/stk")
+	plgn := e.Group("/plgn")
+	ord := e.Group("/ord")
+	rtr := e.Group("/rtr")
+
+	//login_admin
 	e.GET("/login", controller.LoginUM)
-	e.GET("/showSales", salesman.ShowSales)
+	e.GET("/login-admin", controller.LoginAdmin)
+
+	//sales
+	sales.POST("/savesales", salesman.SaveSalesController)
+	sales.GET("/showSales", salesman.ShowSales)
+
+	//Stock
+	stk.POST("/savestock", stock.SaveStockController)
+	stk.GET("/showstock", stock.ShowStock)
+
+	//pelanggan
+	plgn.POST("/savepelanggan", pelanggan.SavePelangganController)
+	plgn.GET("/showpelanggan", pelanggan.ShowPelangganController)
+
+	//order
+	ord.POST("/saveorder", order.SaveOrderController)
+	ord.GET("/showheaderorder", order.ShowHeaderOrderController)
+	ord.GET("/showorderdetail", order.ShowDetailTransaksiController)
+
+	//retur
+	rtr.POST("/saveretur", retur.SaveReturController)
+	rtr.GET("/showheaderretur", retur.ShowHeaderReturController)
+	rtr.GET("/showreturdetail", retur.ShowDetailReturController)
 
 	return e
 }

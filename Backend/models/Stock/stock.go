@@ -2,7 +2,7 @@ package stock
 
 import (
 	"kendrew/db"
-	"kendrew/list"
+	list "kendrew/list/Stock"
 	"kendrew/tools"
 	"net/http"
 )
@@ -14,7 +14,7 @@ func ShowStock() (tools.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT stock.id_stock, stock.nama_barang, stock.harga, stock.jenis_barang FROM stock"
+	sqlStatement := "SELECT stock.id, stock.nama_barang, stock.harga, stock.jenis_barang FROM stock"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -36,9 +36,9 @@ func ShowStock() (tools.Response, error) {
 			return res, err
 		}
 
-		sqlStatement2 := "SELECT jenis_ukuran,stock FROM stock_to_ukuran JOIN ukuran ON stock_to_ukuran.id_ukuran=ukuran.id_ukuran WHERE id_stock=?"
+		sqlStatement2 := "SELECT ukuran.id_ukuran,jenis_ukuran, stock FROM stock_to_ukuran JOIN ukuran ON stock_to_ukuran.id_ukuran=ukuran.id_ukuran WHERE stock_to_ukuran.id_stock=?"
 
-		rows2, err := con.Query(sqlStatement2)
+		rows2, err := con.Query(sqlStatement2, stock.IdProduct)
 
 		defer rows2.Close()
 
@@ -48,7 +48,7 @@ func ShowStock() (tools.Response, error) {
 
 		for rows2.Next() {
 
-			err = rows.Scan(&ukuran.UkuranProduct, &ukuran.Stock)
+			err = rows2.Scan(&ukuran.Id_ukuran, &ukuran.UkuranProduct, &ukuran.Stock)
 			if err != nil {
 				return res, err
 			}

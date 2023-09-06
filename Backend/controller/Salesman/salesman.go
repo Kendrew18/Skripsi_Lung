@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// save_sales
 func SaveSalesController(c echo.Context) error {
 	nama := c.FormValue("nama")
 	alamat := c.FormValue("alamat")
@@ -26,6 +27,7 @@ func SaveSalesController(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+// Show_sales
 func ShowSales(c echo.Context) error {
 
 	result, err := salesman.ShowSales()

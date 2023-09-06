@@ -1,0 +1,17 @@
+//Pelanggan
+o>Input Pelanggan
+Link: id-7.hostddns.us:2461/plgn/savepelanggan
+Method: POST
+Controller:
+nama := c.FormValue("nama")
+alamat := c.FormValue("alamat")
+nomor_hp := c.FormValue("nomor_hp")
+bank := c.FormValue("bank")
+no_rekening := c.FormValue("no_rekening")
+username := c.FormValue("username")
+password := c.FormValue("password")
+
+o>Read Pelanggan
+Link: id-7.hostddns.us:2461/plgn/showpelanggan
+Method: GET
+Controller:

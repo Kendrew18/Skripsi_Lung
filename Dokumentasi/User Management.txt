@@ -1,0 +1,14 @@
+//user management
+o>Login Admin
+Link: id-7.hostddns.us:2461/login-admin
+Method: GET
+Controller:
+username := c.FormValue("username")
+password := c.FormValue("password")
+
+o>Login Sales
+Link: id-7.hostddns.us:2461/login
+Method: GET
+Controller:
+username := c.FormValue("username")
+password := c.FormValue("password")
