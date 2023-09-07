@@ -1,0 +1,37 @@
+//Order
+o>Save Order
+Link: http://id-7.hostddns.us:2461/ord/saveorder
+Method: POST
+Controller:
+id_pelanggan := c.FormValue("id_pelanggan")
+tanggal_pemesanan := c.FormValue("tanggal_pemesanan")
+no_order := c.FormValue("no_order")
+pembayaran := c.FormValue("pembayaran")
+down_payment := c.FormValue("down_payment")
+tanggal_pembayaran := c.FormValue("tanggal_pembayaran")
+catatan := c.FormValue("catatan")
+total_barang := c.FormValue("total_barang")-> contoh: |20|
+harga_jual := c.FormValue("harga_jual")-> contoh: |20|
+sub_total := c.FormValue("sub_total")-> contoh: |20|
+id_ukuran := c.FormValue("id_ukuran")-> contoh: |!3!!4!|
+id_stock := c.FormValue("id_stock")-> contoh: |20|
+jumlah := c.FormValue("jumlah")-> contoh: |!3!!4!|
+satuan := c.FormValue("satuan")-> contoh: |!3!!4!|
+id_sales := c.FormValue("id_sales")
+
+o>Show Header Order
+Link: http://id-7.hostddns.us:2461/ord/showheaderorder
+Method: GET
+Controller:
+id_sales:= c.FormValue("id_sales")
+
+o>Show Detail Order
+Link: http://id-7.hostddns.us:2461/ord/showorderdetail
+Method: GET
+Controller:
+id_order:= c.FormValue("id_order")
+
+o>Show Header Order For Admin
+Link: http://id-7.hostddns.us:2461/ord/showheaderorderadmin
+Method: GET
+Controller:

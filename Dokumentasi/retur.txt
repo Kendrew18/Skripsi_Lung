@@ -1,0 +1,32 @@
+//Retur
+o>Save Retur
+Link: http://id-7.hostddns.us:2461/rtr/saveretur
+Method: POST
+Controller:
+tanggal_retur := c.FormValue("tanggal_retur")
+no_order := c.FormValue("no_order")
+total_barang := c.FormValue("total_barang")-> contoh: |20|
+harga_jual := c.FormValue("harga_jual")-> contoh: |20|
+sub_total := c.FormValue("sub_total")-> contoh: |20|
+id_ukuran := c.FormValue("id_ukuran")-> contoh: |!3!!4!|
+id_stock := c.FormValue("id_stock")-> contoh: |20|
+jumlah := c.FormValue("jumlah")-> contoh: |!3!!4!|
+satuan := c.FormValue("satuan")-> contoh: |!3!!4!|
+id_sales := c.FormValue("id_sales")
+
+o>Show Header Retur
+Link: http://id-7.hostddns.us:2461/rtr/showheaderretur
+Method: GET
+Controller:
+id_sales:= c.FormValue("id_sales")
+
+o>Show Detail Retur
+Link: http://id-7.hostddns.us:2461/rtr/showreturdetail
+Method: GET
+Controller:
+id_retur:= c.FormValue("id_retur")
+
+o>Show Header Retur For Admin
+Link: http://id-7.hostddns.us:2461/rtr/showheaderreturadmin
+Method: GET
+Controller:

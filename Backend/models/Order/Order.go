@@ -321,3 +321,41 @@ func ShowOrderHeader_Admin() (tools.Response, error) {
 
 	return res, nil
 }
+
+// Update Tanggal Pengiriman
+func UpdateTanggalPengiriman(tanggal_pengiriman string, id_order int) (tools.Response, error) {
+	var res tools.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE `order` SET tanggal_pengiriman=? WHERE id_order=?"
+
+	stmt, err := con.Prepare(sqlStatement)
+
+	if err != nil {
+		return res, err
+	}
+
+	date_pengirirman, _ := time.Parse("02-01-2006", tanggal_pengiriman)
+	date_pengirirman_sql := date_pengirirman.Format("2006-01-02")
+
+	result, err := stmt.Exec(date_pengirirman_sql, id_order)
+
+	if err != nil {
+		return res, err
+	}
+
+	getIdLast, err := result.LastInsertId()
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Suksess"
+	res.Data = map[string]int64{
+		"getIdLast": getIdLast,
+	}
+
+	return res, nil
+}

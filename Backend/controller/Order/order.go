@@ -78,3 +78,18 @@ func ShowOrderHeader_AdminController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, result)
 }
+
+func UpdateTanggalPengirimanController(c echo.Context) error {
+	tanggal_pengiriman := c.FormValue("tanggal_pengiriman")
+	id_order := c.FormValue("id_order")
+
+	id_o, _ := strconv.Atoi(id_order)
+
+	result, err := order.UpdateTanggalPengiriman(tanggal_pengiriman, id_o)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}

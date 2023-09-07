@@ -15,3 +15,11 @@ o>Read Sales
 Link: id-7.hostddns.us:2461/sales/showSales
 Method: GET
 Controller:
+
+o>Update Long Lat
+Link: http://id-7.hostddns.us:2461/sales/updateSalesLocation
+Method: PUT
+Controller:
+longitude := c.FormValue("longitude")
+latitude := c.FormValue("latitude")
+idUser := c.FormValue("id_user")
