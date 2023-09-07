@@ -287,3 +287,62 @@ func ShowDetailRetur(id_retur int) (tools.Response, error) {
 
 	return res, nil
 }
+
+func ShowReturHeader_Admin() (tools.Response, error) {
+	var res tools.Response
+	var obj retur.ShowReturHeader
+	var arrobj []retur.ShowReturHeader
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT retur.id_retur, tanggal_retur, SUM(detail_retur.jumlah), nama_toko, kota FROM retur JOIN user ON retur.id_sales = user.id_user JOIN pelanggan ON pelanggan.id_pelanggan = retur.id_pelanggan JOIN detail_retur ON detail_retur.id_retur = retur.id_retur GROUP BY id_retur"
+
+	rows, err := con.Query(sqlStatement)
+	defer rows.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+		var DRB retur.Detail_Retur_Header
+		var arr_DRB []retur.Detail_Retur_Header
+
+		err = rows.Scan(&obj.Id_retur, &obj.Tanggal_retur,
+			&obj.Total_barang, &obj.Nama_toko, &obj.Kota)
+
+		if err != nil {
+			return res, err
+		}
+
+		sqlStatement = "SELECT id_detail_retur, nama_barang, jumlah, satuan FROM detail_retur JOIN stock s ON detail_retur.id_stock = s.id WHERE id_retur=?"
+
+		rows2, err := con.Query(sqlStatement, obj.Id_retur)
+		defer rows.Close()
+
+		if err != nil {
+			return res, err
+		}
+
+		for rows2.Next() {
+			err = rows2.Scan(&DRB.Id_detail_retur,
+				&DRB.Nama_barang, &DRB.Jumlah, &DRB.Satuan)
+
+			if err != nil {
+				return res, err
+			}
+
+			arr_DRB = append(arr_DRB, DRB)
+		}
+
+		obj.Detail_retur_header = arr_DRB
+
+		arrobj = append(arrobj, obj)
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Sukses"
+	res.Data = arrobj
+
+	return res, nil
+}

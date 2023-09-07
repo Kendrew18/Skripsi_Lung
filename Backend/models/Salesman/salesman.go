@@ -15,7 +15,7 @@ func ShowSales() (tools.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT id_user, name, alamat, nomor_hp, bank, no_rekening FROM user "
+	sqlStatement := "SELECT id_user, name, alamat, nomor_hp, bank, no_rekening, `user`.`longitude`, latitude FROM `user` "
 
 	rows, err := con.Query(sqlStatement)
 
@@ -26,11 +26,15 @@ func ShowSales() (tools.Response, error) {
 	}
 
 	for rows.Next() {
+
 		err = rows.Scan(&salesman.IdSales, &salesman.NamaSales, &salesman.Alamat,
-			&salesman.Nomor_hp, &salesman.Bank, &salesman.No_rekening)
+			&salesman.Nomor_hp, &salesman.Bank, &salesman.No_rekening,
+			&salesman.Longitude, &salesman.Latitude)
+
 		if err != nil {
 			return res, err
 		}
+
 		arr_salesman = append(arr_salesman, salesman)
 	}
 
@@ -62,6 +66,40 @@ func SaveSales(name string, alamat string, nomor_hp string, bank string,
 	}
 
 	result, err := stmt.Exec(name, alamat, nomor_hp, bank, no_rekening, username, password)
+
+	if err != nil {
+		return res, err
+	}
+
+	getIdLast, err := result.LastInsertId()
+
+	if err != nil {
+		return res, err
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Suksess"
+	res.Data = map[string]int64{
+		"getIdLast": getIdLast,
+	}
+
+	return res, nil
+}
+
+func UpdateUserLocation(longitude string, latitude string, idUser string) (tools.Response, error) {
+	var res tools.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "update user set latitude=?, longitude=? where id_user=?"
+
+	stmt, err := con.Prepare(sqlStatement)
+
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec(latitude, longitude, idUser)
 
 	if err != nil {
 		return res, err

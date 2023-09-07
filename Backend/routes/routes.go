@@ -34,6 +34,7 @@ func Init() *echo.Echo {
 	//sales
 	sales.POST("/savesales", salesman.SaveSalesController)
 	sales.GET("/showSales", salesman.ShowSales)
+	sales.PUT("/updateSalesLocation", salesman.UpdateLocation)
 
 	//Stock
 	stk.POST("/savestock", stock.SaveStockController)
@@ -47,11 +48,12 @@ func Init() *echo.Echo {
 	ord.POST("/saveorder", order.SaveOrderController)
 	ord.GET("/showheaderorder", order.ShowHeaderOrderController)
 	ord.GET("/showorderdetail", order.ShowDetailTransaksiController)
-
+	ord.GET("/showheaderorderadmin", order.ShowOrderHeader_AdminController)
 	//retur
 	rtr.POST("/saveretur", retur.SaveReturController)
 	rtr.GET("/showheaderretur", retur.ShowHeaderReturController)
 	rtr.GET("/showreturdetail", retur.ShowDetailReturController)
+	rtr.GET("/showheaderreturadmin", retur.ShowReturHeader_AdminController)
 
 	return e
 }

@@ -38,3 +38,17 @@ func ShowSales(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, result)
 }
+
+func UpdateLocation(c echo.Context) error {
+	longitude := c.FormValue("longitude")
+	latitude := c.FormValue("latitude")
+	idUser := c.FormValue("id_user")
+
+	result, err := salesman.UpdateUserLocation(longitude, latitude, idUser)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}

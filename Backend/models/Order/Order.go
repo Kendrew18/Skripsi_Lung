@@ -278,3 +278,46 @@ func ShowDetailTransaksi(id_order int) (tools.Response, error) {
 
 	return res, nil
 }
+
+func ShowOrderHeader_Admin() (tools.Response, error) {
+	var orderheader odr.ShowOrderHeader
+	var arr_orderheader []odr.ShowOrderHeader
+	var res tools.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "SELECT `order`.id_order, no_order, SUM(detail_order.sub_total), name, nama_toko, SUM(detail_order.jumlah), kota FROM `order` JOIN user ON `order`.id_sales = user.id_user JOIN pelanggan ON pelanggan.id_pelanggan = `order`.id_pelanggan JOIN detail_order ON detail_order.id_order = `order`.id_order GROUP BY id_order"
+
+	rows, err := con.Query(sqlStatement)
+
+	defer rows.Close()
+
+	if err != nil {
+		return res, err
+	}
+
+	for rows.Next() {
+
+		err = rows.Scan(&orderheader.Id_order, &orderheader.No_order,
+			&orderheader.Sub_total, &orderheader.Nama_sales,
+			&orderheader.Nama_toko, &orderheader.Total_barang, &orderheader.Kota)
+
+		if err != nil {
+			return res, err
+		}
+
+		arr_orderheader = append(arr_orderheader, orderheader)
+	}
+
+	if arr_orderheader == nil {
+		res.Status = http.StatusNotFound
+		res.Message = "Not Found"
+		res.Data = arr_orderheader
+	} else {
+		res.Status = http.StatusOK
+		res.Message = "Sukses"
+		res.Data = arr_orderheader
+	}
+
+	return res, nil
+}

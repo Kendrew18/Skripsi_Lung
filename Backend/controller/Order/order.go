@@ -67,3 +67,14 @@ func ShowDetailTransaksiController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, result)
 }
+
+func ShowOrderHeader_AdminController(c echo.Context) error {
+
+	result, err := order.ShowOrderHeader_Admin()
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
