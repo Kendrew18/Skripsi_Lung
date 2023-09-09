@@ -93,3 +93,29 @@ func UpdateTanggalPengirimanController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, result)
 }
+
+func UpdateOrderController(c echo.Context) error {
+	id_order := c.FormValue("id_order")
+	pembayaran := c.FormValue("pembayaran")
+	down_payment := c.FormValue("down_payment")
+	tanggal_pembayaran := c.FormValue("tanggal_pembayaran")
+	catatan := c.FormValue("catatan")
+	total_barang := c.FormValue("total_barang")
+	sub_total := c.FormValue("sub_total")
+	id_ukuran := c.FormValue("id_ukuran")
+	id_stock := c.FormValue("id_stock")
+	jumlah := c.FormValue("jumlah")
+	satuan := c.FormValue("satuan")
+
+	id_o, _ := strconv.Atoi(id_order)
+
+	result, err := order.UpdateOrder(id_o, pembayaran,
+		down_payment, tanggal_pembayaran, catatan, total_barang, sub_total,
+		id_ukuran, id_stock, jumlah, satuan)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}

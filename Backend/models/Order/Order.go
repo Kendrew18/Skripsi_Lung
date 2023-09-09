@@ -359,3 +359,104 @@ func UpdateTanggalPengiriman(tanggal_pengiriman string, id_order int) (tools.Res
 
 	return res, nil
 }
+
+// update order
+func UpdateOrder(id_order int, pembayaran string, down_payment string, tanggal_pembayaran string,
+	catatan string, total_barang string, sub_total string,
+	id_ukuran string, id_stock string, jumlah string, satuan string) (tools.Response, error) {
+	var res tools.Response
+
+	con := db.CreateCon()
+
+	//input order
+
+	sqlstatement := "UPDATE `order` SET pembayaran=?, down_payment=?, tanggal_pembayaran=?, catatan=? WHERE id_order=?"
+
+	stmt, err := con.Prepare(sqlstatement)
+
+	if err != nil {
+		return res, err
+	}
+
+	date_pembayaran, _ := time.Parse("02-01-2006", tanggal_pembayaran)
+	date_pembayaran_sql := date_pembayaran.Format("2006-01-02")
+
+	result, err := stmt.Exec(pembayaran, down_payment,
+		date_pembayaran_sql, catatan, id_order)
+
+	if err != nil {
+		return res, err
+	}
+
+	getIdLast, err := result.LastInsertId()
+
+	if err != nil {
+		return res, err
+	}
+
+	//input detail order
+	id_s := tools.String_Separator_To_String(id_stock)
+	total_b := tools.String_Separator_To_float64(total_barang)
+	sub_t := tools.String_Separator_To_Int64(sub_total)
+
+	id_u := tools.String_Separator_To_String(id_ukuran)
+	jumlah_order := tools.String_Separator_To_String(jumlah)
+	satuan_order := tools.String_Separator_To_String(satuan)
+
+	for i := 0; i < len(id_s); i++ {
+		var id odr.ShowID_DetailOrderBarang
+
+		sqlStatement := "SELECT id_detail_order FROM detail_order WHERE id_order=? && id_stock=?"
+
+		err := con.QueryRow(sqlStatement, id_order, id_s[i]).Scan(&id.Id_detail_order)
+
+		if err != nil {
+			return res, err
+		}
+
+		sqlstatement = "UPDATE detail_order SET jumlah=?, satuan=?, sub_total=? WHERE id_detail_order=?"
+
+		stmt, err = con.Prepare(sqlstatement)
+
+		if err != nil {
+			return res, err
+		}
+
+		_, err = stmt.Exec(total_b[i], "pcs", sub_t[i], id.Id_detail_order)
+
+		if err != nil {
+			return res, err
+		}
+
+		//input_detail_order_barang
+		id_u_2_ss := tools.String_Separator_To_Int_Tanda_Seru(id_u[i])
+		jumlah_order_2_ss := tools.String_Separator_To_Int_Tanda_Seru(jumlah_order[i])
+		satuan_order_2_ss := tools.String_Separator_To_String_Tanda_Seru(satuan_order[i])
+
+		for j := 0; j < len(id_u_2_ss); j++ {
+
+			sqlstatement = "UPDATE detail_order_barang SET jumlah=?, satuan=? WHERE id_detail_order=? && id_ukuran=?"
+
+			stmt, err = con.Prepare(sqlstatement)
+
+			if err != nil {
+				return res, err
+			}
+
+			_, err = stmt.Exec(jumlah_order_2_ss[j], satuan_order_2_ss[j], id.Id_detail_order, id_u_2_ss[j])
+
+			if err != nil {
+				return res, err
+			}
+		}
+
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Suksess"
+	res.Data = map[string]int64{
+		"getIdLast": getIdLast,
+	}
+
+	return res, nil
+}
