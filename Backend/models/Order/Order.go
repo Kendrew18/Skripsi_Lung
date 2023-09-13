@@ -9,10 +9,7 @@ import (
 )
 
 // save order
-func SaveOrder(id_pelanggan int, id_sales int, tanggal_pemesanan string, no_order string,
-	pembayaran string, down_payment string, tanggal_pembayaran string,
-	catatan string, total_barang string, harga_jual string, sub_total string,
-	id_ukuran string, id_stock string, jumlah string, satuan string) (tools.Response, error) {
+func SaveOrder(id_pelanggan int, id_sales int, tanggal_pemesanan string, no_order string, pembayaran string, down_payment string, tanggal_pembayaran string, catatan string, total_barang string, harga_jual string, sub_total string, id_ukuran string, id_stock string, jumlah string, satuan string) (tools.Response, error) {
 
 	var res tools.Response
 
@@ -135,7 +132,7 @@ func ShowOrderHeader(id_sales int) (tools.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT `order`.id_order, no_order, SUM(detail_order.sub_total), name, nama_toko, SUM(detail_order.jumlah), kota FROM `order` JOIN user ON `order`.id_sales = user.id_user JOIN pelanggan ON pelanggan.id_pelanggan = `order`.id_pelanggan JOIN detail_order ON detail_order.id_order = `order`.id_order WHERE id_sales=? GROUP BY id_order"
+	sqlStatement := "SELECT `order`.id_order, no_order, SUM(detail_order.sub_total), name, nama_toko, SUM(detail_order.jumlah), kota, status_order FROM `order` JOIN user ON `order`.id_sales = user.id_user JOIN pelanggan ON pelanggan.id_pelanggan = `order`.id_pelanggan JOIN detail_order ON detail_order.id_order = `order`.id_order WHERE id_sales=? GROUP BY id_order"
 
 	rows, err := con.Query(sqlStatement, id_sales)
 
@@ -147,9 +144,7 @@ func ShowOrderHeader(id_sales int) (tools.Response, error) {
 
 	for rows.Next() {
 
-		err = rows.Scan(&orderheader.Id_order, &orderheader.No_order,
-			&orderheader.Sub_total, &orderheader.Nama_sales,
-			&orderheader.Nama_toko, &orderheader.Total_barang, &orderheader.Kota)
+		err = rows.Scan(&orderheader.Id_order, &orderheader.No_order, &orderheader.Sub_total, &orderheader.Nama_sales, &orderheader.Nama_toko, &orderheader.Total_barang, &orderheader.Kota, &orderheader.Status_order)
 
 		if err != nil {
 			return res, err
@@ -179,13 +174,9 @@ func ShowDetailTransaksi(id_order int) (tools.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT `order`.id_order, nama_toko, pelanggan.alamat, kota, pelanggan.no_telp, SUM(detail_order.jumlah), `order`.no_order, tanggal_pesanan, tanggal_pengiriman, pembayaran, down_payment, tanggal_pembayaran, name, SUM(detail_order.sub_total) FROM `order` JOIN `user` ON `order`.id_sales = `user`.id_user JOIN pelanggan ON pelanggan.id_pelanggan = `order`.id_pelanggan JOIN detail_order ON detail_order.id_order=`order`.`id_order` WHERE `order`.id_order=?"
+	sqlStatement := "SELECT `order`.id_order, nama_toko, pelanggan.alamat, kota, pelanggan.no_telp, SUM(detail_order.jumlah), `order`.no_order, tanggal_pesanan, tanggal_pengiriman, pembayaran, down_payment, tanggal_pembayaran, name, SUM(detail_order.sub_total),status_order FROM `order` JOIN `user` ON `order`.id_sales = `user`.id_user JOIN pelanggan ON pelanggan.id_pelanggan = `order`.id_pelanggan JOIN detail_order ON detail_order.id_order=`order`.`id_order` WHERE `order`.id_order=?"
 
-	err := con.QueryRow(sqlStatement, id_order).Scan(&DetailTransaksi.Id_order, &DetailTransaksi.Nama_toko, &DetailTransaksi.Alamat,
-		&DetailTransaksi.Kota, &DetailTransaksi.No_telp, &DetailTransaksi.Total_barang, &DetailTransaksi.No_order,
-		&DetailTransaksi.Tanggal_pesanan, &DetailTransaksi.Tanggal_pengiriman, &DetailTransaksi.Pembayaran,
-		&DetailTransaksi.Down_payment, &DetailTransaksi.Tanggal_pembayaran, &DetailTransaksi.Nama_sales,
-		&DetailTransaksi.Sub_total)
+	err := con.QueryRow(sqlStatement, id_order).Scan(&DetailTransaksi.Id_order, &DetailTransaksi.Nama_toko, &DetailTransaksi.Alamat, &DetailTransaksi.Kota, &DetailTransaksi.No_telp, &DetailTransaksi.Total_barang, &DetailTransaksi.No_order, &DetailTransaksi.Tanggal_pesanan, &DetailTransaksi.Tanggal_pengiriman, &DetailTransaksi.Pembayaran, &DetailTransaksi.Down_payment, &DetailTransaksi.Tanggal_pembayaran, &DetailTransaksi.Nama_sales, &DetailTransaksi.Sub_total, &DetailTransaksi.Status_order)
 
 	if err != nil {
 		return res, err
@@ -279,6 +270,7 @@ func ShowDetailTransaksi(id_order int) (tools.Response, error) {
 	return res, nil
 }
 
+// Show Header For Admin APPS
 func ShowOrderHeader_Admin() (tools.Response, error) {
 	var orderheader odr.ShowOrderHeader
 	var arr_orderheader []odr.ShowOrderHeader
@@ -286,7 +278,7 @@ func ShowOrderHeader_Admin() (tools.Response, error) {
 
 	con := db.CreateCon()
 
-	sqlStatement := "SELECT `order`.id_order, no_order, SUM(detail_order.sub_total), name, nama_toko, SUM(detail_order.jumlah), kota FROM `order` JOIN user ON `order`.id_sales = user.id_user JOIN pelanggan ON pelanggan.id_pelanggan = `order`.id_pelanggan JOIN detail_order ON detail_order.id_order = `order`.id_order GROUP BY id_order"
+	sqlStatement := "SELECT `order`.id_order, no_order, SUM(detail_order.sub_total), name, nama_toko, SUM(detail_order.jumlah), kota, status_order FROM `order` JOIN user ON `order`.id_sales = user.id_user JOIN pelanggan ON pelanggan.id_pelanggan = `order`.id_pelanggan JOIN detail_order ON detail_order.id_order = `order`.id_order GROUP BY id_order"
 
 	rows, err := con.Query(sqlStatement)
 
@@ -298,9 +290,7 @@ func ShowOrderHeader_Admin() (tools.Response, error) {
 
 	for rows.Next() {
 
-		err = rows.Scan(&orderheader.Id_order, &orderheader.No_order,
-			&orderheader.Sub_total, &orderheader.Nama_sales,
-			&orderheader.Nama_toko, &orderheader.Total_barang, &orderheader.Kota)
+		err = rows.Scan(&orderheader.Id_order, &orderheader.No_order, &orderheader.Sub_total, &orderheader.Nama_sales, &orderheader.Nama_toko, &orderheader.Total_barang, &orderheader.Kota, &orderheader.Status_order)
 
 		if err != nil {
 			return res, err
@@ -328,7 +318,7 @@ func UpdateTanggalPengiriman(tanggal_pengiriman string, id_order int) (tools.Res
 
 	con := db.CreateCon()
 
-	sqlStatement := "UPDATE `order` SET tanggal_pengiriman=? WHERE id_order=?"
+	sqlStatement := "UPDATE `order` SET tanggal_pengiriman=?, status_order=? WHERE id_order=?"
 
 	stmt, err := con.Prepare(sqlStatement)
 
@@ -339,7 +329,7 @@ func UpdateTanggalPengiriman(tanggal_pengiriman string, id_order int) (tools.Res
 	date_pengirirman, _ := time.Parse("02-01-2006", tanggal_pengiriman)
 	date_pengirirman_sql := date_pengirirman.Format("2006-01-02")
 
-	result, err := stmt.Exec(date_pengirirman_sql, id_order)
+	result, err := stmt.Exec(date_pengirirman_sql, "DELIVERY", id_order)
 
 	if err != nil {
 		return res, err
@@ -361,9 +351,7 @@ func UpdateTanggalPengiriman(tanggal_pengiriman string, id_order int) (tools.Res
 }
 
 // update order
-func UpdateOrder(id_order int, pembayaran string, down_payment string, tanggal_pembayaran string,
-	catatan string, total_barang string, sub_total string,
-	id_ukuran string, id_stock string, jumlah string, satuan string) (tools.Response, error) {
+func UpdateOrder(id_order int, pembayaran string, down_payment string, tanggal_pembayaran string, catatan string, total_barang string, sub_total string, id_ukuran string, id_stock string, jumlah string, satuan string) (tools.Response, error) {
 	var res tools.Response
 
 	con := db.CreateCon()
@@ -450,6 +438,41 @@ func UpdateOrder(id_order int, pembayaran string, down_payment string, tanggal_p
 			}
 		}
 
+	}
+
+	res.Status = http.StatusOK
+	res.Message = "Suksess"
+	res.Data = map[string]int64{
+		"getIdLast": getIdLast,
+	}
+
+	return res, nil
+}
+
+// Update Status To Done
+func Update_Status_Order(id_order int) (tools.Response, error) {
+	var res tools.Response
+
+	con := db.CreateCon()
+
+	sqlStatement := "UPDATE `order` SET status_order=? WHERE id_order=?"
+
+	stmt, err := con.Prepare(sqlStatement)
+
+	if err != nil {
+		return res, err
+	}
+
+	result, err := stmt.Exec("DONE", id_order)
+
+	if err != nil {
+		return res, err
+	}
+
+	getIdLast, err := result.LastInsertId()
+
+	if err != nil {
+		return res, err
 	}
 
 	res.Status = http.StatusOK

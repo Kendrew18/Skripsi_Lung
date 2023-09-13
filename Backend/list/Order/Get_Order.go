@@ -7,6 +7,7 @@ type ShowOrderHeader struct {
 	Nama_sales   string `json:"nama_sales"`
 	Nama_toko    string `json:"nama_toko"`
 	Kota         string `json:"kota"`
+	Status_order string `json:"status_order"`
 	Total_barang string `json:"total_barang"`
 }
 type ShowDetailTransaksi struct {
@@ -25,6 +26,7 @@ type ShowDetailTransaksi struct {
 	Nama_sales         string         `json:"nama_sales"`
 	Sub_total          int64          `json:"sub_total"`
 	Retur              int64          `json:"retur"`
+	Status_order       string         `json:"status_order"`
 	Detail_order       []Detail_Order `json:"detail_Order"`
 }
 

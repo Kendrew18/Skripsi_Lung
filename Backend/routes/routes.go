@@ -51,6 +51,7 @@ func Init() *echo.Echo {
 	ord.GET("/showheaderorderadmin", order.ShowOrderHeader_AdminController)
 	ord.PUT("/updatetanggalpengiriman", order.UpdateTanggalPengirimanController)
 	ord.PUT("/updateorder", order.UpdateOrderController)
+	ord.PUT("/updatestatusorder", order.UpdateStatusOrder)
 
 	//retur
 	rtr.POST("/saveretur", retur.SaveReturController)

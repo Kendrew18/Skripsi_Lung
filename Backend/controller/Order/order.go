@@ -119,3 +119,17 @@ func UpdateOrderController(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, result)
 }
+
+func UpdateStatusOrder(c echo.Context) error {
+	id_order := c.FormValue("id_order")
+
+	id_o, _ := strconv.Atoi(id_order)
+
+	result, err := order.Update_Status_Order(id_o)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"message": err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
